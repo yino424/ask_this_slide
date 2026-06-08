@@ -26,6 +26,7 @@ Ask This Slide lets you:
 - Get concise bilingual study notes with standard English academic terms.
 
 It is not just a screenshot translator. It tries to understand slides, formulas, code, charts, diagrams, arrows, and visual structure.
+If the page is visually messy, it tries to focus on the main educational area, such as the video frame, slide canvas, whiteboard, formula region, or code editor, and ignore browser UI, comments, ads, sidebars, and recommendations.
 
 ## Local-Only MVP
 
@@ -83,6 +84,8 @@ The popup sends screenshots to:
 ```text
 http://localhost:8787/api/analyze-frame
 ```
+
+Do not open `extension/dist/popup/index.html` directly as a normal webpage. Ask This Slide needs to be loaded as a Chrome extension so it can capture the current tab.
 
 ## API Key Safety
 

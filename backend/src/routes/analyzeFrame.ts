@@ -57,12 +57,15 @@ analyzeFrameRouter.post("/analyze-frame", async (req, res) => {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     const isMissingApiKey = message.includes("OPENAI_API_KEY");
+    const isOpenAiUserSafeError = message.startsWith("OpenAI:");
 
     return res.status(500).json({
       error: isMissingApiKey ? "API key missing" : "Failed to analyze frame",
       message: isMissingApiKey
         ? "The backend is missing OPENAI_API_KEY. Add it to backend/.env and restart the server."
-        : "OpenAI could not analyze this frame right now. Please try again in a moment."
+        : isOpenAiUserSafeError
+          ? message.replace(/^OpenAI:\s*/, "")
+          : "OpenAI could not analyze this frame right now. Please try again in a moment."
     });
   }
 });

@@ -25,10 +25,6 @@ export type AnalyzeFrameResponse = {
   copyableStudyNotes: string;
 };
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
-
 const analyzeFrameResponseSchema = {
   type: "object",
   additionalProperties: false,
@@ -83,6 +79,10 @@ export async function analyzeFrame(request: AnalyzeFrameRequest): Promise<Analyz
     throw new Error("OPENAI_API_KEY is not configured. Add it to backend/.env.");
   }
 
+  const client = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+  });
+
   const prompt = buildAnalyzeFramePrompt(request);
   const model = process.env.OPENAI_MODEL ?? "gpt-4.1-mini";
 
@@ -110,8 +110,8 @@ export async function analyzeFrame(request: AnalyzeFrameRequest): Promise<Analyz
         }
       }
     });
-  } catch {
-    throw new Error("OpenAI API error.");
+  } catch (error) {
+    throw new Error(`OpenAI: ${getOpenAiFriendlyMessage(error)}`);
   }
 
   const rawText = response.output_text;
@@ -125,4 +125,27 @@ export async function analyzeFrame(request: AnalyzeFrameRequest): Promise<Analyz
   } catch {
     throw new Error("OpenAI returned invalid JSON.");
   }
+}
+
+function getOpenAiFriendlyMessage(error: unknown): string {
+  const status = typeof error === "object" && error !== null && "status" in error ? Number(error.status) : 0;
+  const code = typeof error === "object" && error !== null && "code" in error ? String(error.code) : "";
+
+  if (status === 401) {
+    return "Your OpenAI API key was rejected. Check backend/.env, save it, and restart the backend.";
+  }
+
+  if (status === 403) {
+    return "Your OpenAI account does not have access to this model or request. Try changing OPENAI_MODEL in backend/.env.";
+  }
+
+  if (status === 429 || code === "rate_limit_exceeded") {
+    return "OpenAI rate limit or quota was reached. Please wait, check billing/quota, or try a smaller frame.";
+  }
+
+  if (status === 400) {
+    return "OpenAI could not read this image request. Try a cleaner frame, smaller browser window, or different model.";
+  }
+
+  return "OpenAI could not analyze this frame right now. Please try again in a moment.";
 }
