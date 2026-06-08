@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Ask This Slide",
+  "description": "Capture the current frame and generate bilingual study notes.",
+  "version": "0.1.0",
+  "action": {
+    "default_title": "Ask This Slide",
+    "default_popup": "src/popup/index.html"
+  },
+  "permissions": ["activeTab", "tabs"],
+  "host_permissions": ["http://localhost:8787/*"]
+}
