@@ -1,6 +1,6 @@
 # Ask This Slide
 
-🎓✨A Chrome extension for turning the slide or video frame you are watching into bilingual study notes. Built for local use, with your own OpenAI API key. 🎓✨
+🎓✨A Chrome extension for turning the slide or video frame you are watching into bilingual study notes. Built for local use, with your own OpenAI API key. 
 
 ## Why I Built This
 
